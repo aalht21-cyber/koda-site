@@ -1,0 +1,141 @@
+/* ==========================================================================
+   K0DA — база: reset, типографика, сетка, служебные классы
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: var(--nav-h);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.6;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+img, video { height: auto; }
+a { color: inherit; text-decoration: none; }
+address { font-style: normal; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+
+h1, h2, h3 { text-wrap: balance; font-weight: 500; }
+p, li, dd { text-wrap: pretty; }
+
+h1, .h1 {
+  font-size: var(--fs-h1);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: var(--tracking-h1);
+}
+h2, .h2 { font-size: var(--fs-h2); line-height: 1.15; }
+h3, .h3 { font-size: var(--fs-small); font-weight: 600; text-transform: uppercase; line-height: 1.4; }
+
+.lead { font-size: var(--fs-lead); line-height: 1.45; max-width: var(--measure); }
+.text { max-width: var(--measure); }
+.text > * + * { margin-top: var(--s-2); }
+.micro {
+  font-size: var(--fs-micro);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-micro);
+  line-height: 1.45;
+}
+.muted { color: var(--ink-2); }
+
+::selection { background: var(--ink); color: var(--paper); }
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* --- Сетка ---------------------------------------------------------------- */
+.container { padding-inline: var(--gutter); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section);
+  border-top: 1px solid var(--line);
+}
+.section__head { margin-bottom: var(--s-6); }
+.section__code { margin-bottom: var(--s-2); color: var(--ink-2); }
+
+/* --- Hero-строка раздела -------------------------------------------------- */
+.page-hero {
+  padding-top: calc(var(--nav-h) + var(--s-12));
+  padding-bottom: var(--s-12);
+}
+.page-hero__code { margin-bottom: var(--s-3); color: var(--ink-2); }
+
+/* --- Служебное ------------------------------------------------------------ */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--s-1);
+  left: var(--gutter);
+  z-index: 100;
+  padding: var(--s-1) var(--s-2);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-transform: uppercase;
+  transform: translateY(-200%);
+}
+.skip-link:focus-visible { transform: none; }
+
+[hidden] { display: none !important; }
+
+/* видимая «закодированная» подпись внутри ссылки/кнопки: раскладка как без обёртки */
+.vis-label { display: contents; }
+
+/* Пока render.js не нарисовал содержимое, держим место — подвал не «прыгает» (CLS) */
+html.js [data-render]:empty { min-height: 100vh; }
+html.js [data-render-info]:empty { min-height: 50vh; }
+[data-page="configurator"] [data-render]:empty,
+[data-page="not-found"] [data-render]:empty,
+[data-page="product"] [data-render]:empty { min-height: 0; }
+
+body.is-locked { overflow: hidden; }
+
+/* Без движения. Фото оставляем с простым fade (opacity), остальное — мгновенно */
+@media (prefers-reduced-motion: reduce) {
+  *:not(img), *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

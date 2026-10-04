@@ -1,0 +1,250 @@
+/* ==========================================================================
+   K0DA — конфигуратор. Десктоп: сцена 72% слева, зона выбора 28% справа,
+   почти весь вьюпорт. Мобильный: сцена сверху (~60svh), варианты снизу.
+   UI почти невидим: тонкие линии, мелкие подписи, молочный фон.
+   ========================================================================== */
+.cfg {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding-top: var(--nav-h);
+  background: var(--paper);
+}
+@media (min-width: 1024px) {
+  .cfg {
+    grid-template-columns: minmax(0, 72fr) minmax(0, 28fr);
+    height: 100vh;
+    height: 100svh;
+    min-height: calc(var(--s-20) * 4);
+  }
+}
+
+/* --- Сцена ---------------------------------------------------------------- */
+.cfg__stage { display: flex; flex-direction: column; min-width: 0; }
+/* мобильный и планшет: сцена «липнет» под шапкой — фильм виден, пока выбираешь ниже */
+@media (max-width: 1023px) {
+  .cfg__stage {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 2;
+    background: var(--paper);
+  }
+}
+.cfg__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  min-height: var(--s-6);
+  padding-inline: var(--gutter);
+  border-bottom: 1px solid var(--line);
+}
+.cfg__progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--s-3);
+  /* будущие этапы — «серебро», затемнённое до контраста 4.5:1 на бумаге */
+  color: #77746D;
+  color: color-mix(in srgb, var(--silver), var(--ink) 48%);
+}
+.cfg__progress li { white-space: pre; transition: color var(--t-mid) var(--ease); }
+.cfg__progress li.is-done { color: var(--ink); }
+.cfg__progress li.is-current {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.cfg__progress span { color: inherit; }
+.cfg__loading { color: var(--ink-2); letter-spacing: .1em; white-space: pre; overflow: hidden; }
+
+.cfg__scene {
+  position: relative;
+  height: 45vh;
+  height: 45svh;
+  overflow: hidden;
+  background: var(--paper);
+}
+@media (min-width: 1024px) { .cfg__scene { flex: 1; height: auto; } }
+.cfg__canvas,
+.cfg__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cfg__video {
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 400ms var(--ease);
+  pointer-events: none;
+}
+.cfg__video.is-on { opacity: 1; }
+
+/* --- Зона выбора ---------------------------------------------------------- */
+.cfg__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+  padding: var(--s-4) var(--gutter) calc(var(--ticker-h) + var(--s-4));
+  border-top: 1px solid var(--line);
+}
+@media (min-width: 1024px) {
+  .cfg__panel {
+    border-top: 0;
+    border-left: 1px solid var(--line);
+    overflow-y: auto;
+  }
+}
+.cfg__code { color: var(--ink-2); }
+.cfg__step { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.cfg__title {
+  min-height: 2.3em;
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: var(--tracking-h1);
+  white-space: pre-wrap;
+}
+.cfg__sub { color: var(--ink-2); }
+
+/* Варианты: тонкая линия, номер, миниатюра; при наведении — масштаб и прозрачность */
+.cfg__options { display: grid; margin-top: var(--s-2); border-top: 1px solid var(--line); }
+.cfg__options > li {
+  opacity: 0;
+  transform: translateY(var(--s-1));
+  transition: opacity var(--t-slow) var(--ease), transform var(--t-slow) var(--ease);
+  transition-delay: calc(var(--i, 0) * 140ms);
+}
+.cfg__options.is-in > li { opacity: 1; transform: none; }
+.cfg__options.is-out > li { opacity: 0; transition-delay: 0ms; transition-duration: var(--t-mid); }
+.cfg-opt {
+  display: grid;
+  grid-template-columns: 3ch var(--s-6) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-2);
+  width: 100%;
+  min-height: var(--s-8);
+  padding-block: var(--s-2);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  color: var(--ink-2);
+  transition: color var(--t-mid) var(--ease), transform var(--t-mid) var(--ease);
+  transform-origin: left center;
+}
+.cfg-opt:focus-visible { color: var(--ink); outline-offset: -2px; }
+.cfg-opt.is-chosen { color: var(--ink); }
+/* «прозрачность .7 → 1» — на миниатюре, текст остаётся контрастным */
+.cfg-opt__thumb, .cfg-opt__tara { opacity: .72; transition: opacity var(--t-mid) var(--ease); }
+.cfg-opt:hover .cfg-opt__thumb, .cfg-opt:hover .cfg-opt__tara,
+.cfg-opt:focus-visible .cfg-opt__thumb, .cfg-opt.is-chosen .cfg-opt__thumb { opacity: 1; }
+@media (hover: hover) {
+  .cfg-opt:hover { color: var(--ink); transform: scale(1.02); }
+}
+.cfg-opt__n { color: var(--ink-2); }
+.cfg-opt__thumb {
+  position: relative;
+  display: block;
+  width: var(--s-6);
+  height: var(--s-6);
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--tint, var(--stone));
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.cfg-opt__thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* постер ролика: в кружке — само сырьё (оно стоит слева от колбы), а не вся сцена */
+.cfg-opt__thumb .cfg-opt__poster {
+  object-position: 30% 62%;
+  transform: scale(2.2);
+  transform-origin: 30% 62%;
+}
+.cfg-opt__tara { display: block; width: var(--s-6); height: var(--s-6); }
+.cfg-opt__tara svg { width: 100%; height: 100%; fill: none; stroke: var(--ink); stroke-width: 2; }
+.cfg-opt__body { display: grid; gap: var(--s-1); min-width: 0; }
+.cfg-opt__name {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  white-space: pre-wrap;
+}
+.cfg-opt__meta { color: var(--ink-2); text-transform: none; letter-spacing: 0; }
+
+/* --- Результат: паспорт формулы в стиле этикетки -------------------------- */
+.cfg__result {
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  border: 1px solid var(--line);
+  background: var(--stone);
+  opacity: 0;
+  transition: opacity var(--t-slow) var(--ease);
+}
+.cfg__result.is-in { opacity: 1; }
+.cfg-result__code { font-weight: 600; }
+.cfg-result__ings { font-size: var(--fs-lead); line-height: 1.3; }
+.cfg-result__type { color: var(--ink-2); }
+.cfg-passport { display: grid; gap: var(--s-1); padding-block: var(--s-2); border-block: 1px solid var(--line); }
+.cfg-passport > div { display: grid; grid-template-columns: 12ch minmax(0, 1fr); gap: var(--s-2); align-items: baseline; }
+.cfg-passport dt { color: var(--ink-2); }
+.cfg-swatch {
+  display: inline-block;
+  width: var(--s-2);
+  height: var(--s-2);
+  margin-left: var(--s-1);
+  vertical-align: -2px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.cfg-result__list { display: grid; gap: var(--s-1); }
+.cfg-result__list li { display: grid; grid-template-columns: 3ch minmax(0, 1fr); column-gap: var(--s-1); }
+.cfg-result__list li > :last-child { grid-column: 2; }
+
+/* --- Сохранение ----------------------------------------------------------- */
+.cfg__save {
+  display: grid;
+  gap: var(--s-2);
+  opacity: 0;
+  transform: translateY(var(--s-1));
+  transition: opacity var(--t-slow) var(--ease), transform var(--t-slow) var(--ease);
+}
+.cfg__save.is-in { opacity: 1; transform: none; }
+.cfg-save__title { font-weight: 500; }
+.cfg-save__row { display: grid; gap: var(--s-1); }
+.cfg-save__input {
+  min-height: var(--tap);
+  padding: 0 var(--s-2);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  font-size: var(--fs-body);
+}
+.cfg-save__input::placeholder { color: var(--ink-2); }
+.cfg-save__input[aria-invalid="true"] { border-color: var(--plum); }
+.cfg-save__error { color: var(--plum); text-transform: none; letter-spacing: 0; }
+.cfg__save .btn { transition: transform 150ms var(--ease), background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+.cfg__save .btn.is-pressed { transform: scale(.97); }
+
+/* --- Низ панели ----------------------------------------------------------- */
+.cfg__foot { display: grid; gap: var(--s-2); margin-top: auto; padding-top: var(--s-4); }
+.cfg__link {
+  min-height: var(--tap);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+}
+@media (hover: hover) {
+  .cfg__link:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+}
+.cfg__philosophy { color: var(--ink-2); text-transform: none; letter-spacing: 0; }
+.cfg__noscript { padding: var(--s-4) var(--gutter); }

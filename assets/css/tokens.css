@@ -1,0 +1,74 @@
+/* ==========================================================================
+   K0DA — дизайн-токены. Единственный источник цветов, отступов и шрифтовой шкалы.
+   Тёмной темы нет.
+   ========================================================================== */
+:root {
+  /* Цвет */
+  --paper: #F4F2EC;
+  --stone: #E9E5DD;
+  --ink: #1B1B19;
+  --ink-2: #55554D;
+  --line: rgba(27, 27, 25, .14);
+  --olive-900: #3B3F22;
+  --olive-600: #707850;
+  --olive-300: #B8B898;
+  --plum: #663F67;
+  --silver: #B9B5AD;
+  --tag-violet: #9A86B0; /* только метки линий */
+  --tag-sage: #9FAA8E;   /* только метки линий */
+
+  /* Сетка: символ 8 × строка 16 */
+  --u: 8px;
+  --row: 16px;
+  --s-1: 8px;
+  --s-2: 16px;
+  --s-3: 24px;
+  --s-4: 32px;
+  --s-6: 48px;
+  --s-8: 64px;
+  --s-12: 96px;
+  --s-16: 128px;
+  --s-20: 160px;
+
+  --gutter: 16px;
+  --section: 96px;
+  --cols: 4;
+  --nav-h: 48px;
+  --ticker-h: var(--row);
+  --tap: 44px;
+  --measure: 64ch;
+
+  /* Типографика — только Fira Code */
+  --font: "Fira Code", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --fs-micro: 12px; /* не меньше 12px — читаемость на телефоне */
+  --fs-small: clamp(13px, 12.6px + .1vw, 14px);
+  --fs-body: clamp(15px, 14.6px + .1vw, 16px);
+  --fs-lead: clamp(20px, 18.6px + .4vw, 24px);
+  --fs-h2: clamp(28px, 23.5px + 1.2vw, 40px);
+  --fs-h1: clamp(40px, 28px + 3.2vw, 72px);
+  --fs-mega: clamp(12vw, 10vw + 4vh, 18vw);
+  --tracking-micro: .04em;
+  --tracking-h1: -.02em;
+
+  /* Движение */
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --t-fast: 200ms;
+  --t-mid: 400ms;
+  --t-slow: 700ms;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --gutter: 24px;
+    --cols: 6;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gutter: 32px;
+    --section: 160px;
+    --cols: 12;
+    --nav-h: 56px;
+  }
+}
